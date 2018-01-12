@@ -55,14 +55,14 @@ function deletePlayer(id, socketClient) {
 sioServer.on('connection', (socketClient) => {
     socketClient.on('subscribeToApp', (pseudo) => {
         addPlayer(pseudo, socketClient);
-        sioServer.emit('updatePlayers', {players});
+        sioServer.emit('updatePlayers', players);
     });
 
     socketClient.on('disconnect', () => {
         // TODO bug aléatoire on disconnect
         if(playersMap.size > 0 && playersMap.get(socketClient) && playersMap.get(socketClient).id !== -1) {
             deletePlayer(playersMap.get(socketClient).id, socketClient);
-            sioServer.emit('updatePlayers', {players});
+            sioServer.emit('updatePlayers', players);
         }
     });
 });

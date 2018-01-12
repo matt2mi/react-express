@@ -18,9 +18,7 @@ export default class WaitingPlayers extends React.Component<Props, State> {
     socket: Socket;
 
     onUpdatePlayers(players: Player[]) {
-        console.log('onUpdate', players);
-        this.setState({players}); // TODO update du state pète le html
-        console.log('state', this.state.players);
+        this.setState({players});
     }
 
     constructor(props: Props) {
@@ -35,12 +33,13 @@ export default class WaitingPlayers extends React.Component<Props, State> {
     componentWillMount() {
         fetch('/players')
             .then(result => {
-                console.log('result', result);
                 return result.json();
             })
             .then((players: Player[]) => {
-                console.log('players', players);
-                this.onUpdatePlayers(players);
+                const truePlayers: Player[] = players.map((res: any) => {
+                    return {id: res.id, pseudo: res.pseudo}
+                });
+                this.onUpdatePlayers(truePlayers);
             })
             .catch(e => {
                 console.error(e);
