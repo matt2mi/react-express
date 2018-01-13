@@ -48,21 +48,19 @@ export default class Login extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className="container">
-                <div className="row pt-3 justify-content-center">
-                    <div className="card">
-                        <div className="card-header">
-                            Login
-                        </div>
-                        <div className="card-block">
-                            <form>
-                                <div className="form-group">
-                                    <label>Pseudo</label>
-                                    <input type="text" className="form-control" onChange={this.changeValue}/>
-                                </div>
-                                <MyButton cb={this.login} type={'submit'}>Login</MyButton>
-                            </form>
-                        </div>
+            <div className="row mt-3 justify-content-center">
+                <div className="card">
+                    <div className="card-header">
+                        Login
+                    </div>
+                    <div className="card-block p-3">
+                        <form>
+                            <div className="form-group">
+                                <label>Pseudo</label>
+                                <input type="text" className="form-control" onChange={this.changeValue}/>
+                            </div>
+                            <MyButton cb={this.login} type={'submit'}>Login</MyButton>
+                        </form>
                     </div>
                 </div>
             </div>
