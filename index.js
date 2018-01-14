@@ -106,8 +106,9 @@ console.info(`Socket server listening on port ${sioPort}`);
 let sioServer = sio(httpServer);
 
 const players = []; // ['pseudo']
-const playersMap = new Map(); // (socketClient, 'pseudo')
 const maxPlayers = 2;
+const playersMap = new Map(); // (socketClient, 'pseudo')
+const liesMap = new Map();
 
 function addPlayer(pseudo, socketClient) {
     console.log(`${pseudo} is subscribing to app !`);
@@ -116,13 +117,32 @@ function addPlayer(pseudo, socketClient) {
 }
 
 function deletePlayer(id, socketClient) {
-    console.log(`${players[id].pseudo} is disconnected from app !`);
-    players.splice(id, 1);
-    players.map((player, id) => { return {id, pseudo: player.pseudo}; });
-    playersMap.delete(socketClient);
+    if(players.length > 0) {
+        console.log('id', id);
+        console.log(`${players[id].pseudo} is disconnected from app !`);
+        players.splice(id, 1);
+        players.map((player, id) => { return {id, pseudo: player.pseudo}; });
+        playersMap.delete(socketClient);
+    }
+}
+
+// TODO : dynamic key name
+function maptoArray(map) {
+    const array = [];
+    for(let [key, value] of map) {
+        array.push({key, value});
+    }
+    return array;
 }
 
 sioServer.on('connection', (socketClient) => {
+    socketClient.on('disconnect', () => {
+        if(playersMap.size > 0 && playersMap.get(socketClient) && playersMap.get(socketClient).id !== -1) {
+            deletePlayer(playersMap.get(socketClient).id, socketClient);
+            sioServer.emit('updatePlayers', players);
+        }
+    });
+
     socketClient.on('subscribeToApp', (pseudo) => {
         if(players.length < maxPlayers) {
             addPlayer(pseudo, socketClient);
@@ -134,10 +154,11 @@ sioServer.on('connection', (socketClient) => {
         }
     });
 
-    socketClient.on('disconnect', () => {
-        if(playersMap.size > 0 && playersMap.get(socketClient) && playersMap.get(socketClient).id !== -1) {
-            deletePlayer(playersMap.get(socketClient).id, socketClient);
-            sioServer.emit('updatePlayers', players);
+    socketClient.on('lieAnswered', ({lieValue, pseudo}) => {
+        console.log('lie received ', lieValue, ' from ', pseudo);
+        liesMap.set(pseudo, lieValue);
+        if(liesMap.size === players.length) {
+            sioServer.emit('loadLies', maptoArray(liesMap));
         }
-    });
+    })
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {SyntheticEvent} from 'react';
-import {subscribeToApp} from '../helpers/io-api';
+import {subscribeToApp, setCurrentPseudo} from '../helpers/io-api';
 import MyButton from './MyLinkButton';
 import {History} from 'history';
 
@@ -14,19 +14,20 @@ interface State {
 
 export default class Login extends React.Component<Props, State> {
 
-    changeValue = (event: React.FormEvent<HTMLInputElement>) => {
+    changeValue(event: React.FormEvent<HTMLInputElement>) {
         this.setState({
             pseudo: event.currentTarget.value
         });
     }
 
-    login = (event: SyntheticEvent<HTMLButtonElement>, history: History) => {
+    login(event: SyntheticEvent<HTMLButtonElement>, history: History) {
         event.preventDefault();
         subscribeToApp(
             (error: string) => {
                 if (error.length > 0) {
                     console.error(error);
                 } else {
+                    setCurrentPseudo(this.state.pseudo);
                     history.push('/waiting');
                 }
             },

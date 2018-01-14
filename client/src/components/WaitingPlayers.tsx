@@ -45,7 +45,7 @@ class WaitingPlayers extends React.Component<Props, State> {
             })
             .then((players: Player[]) => {
                 const truePlayers: Player[] = players.map((res: any) => {
-                    return {id: res.id, pseudo: res.pseudo}
+                    return {id: res.id, pseudo: res.pseudo};
                 });
                 this.onUpdatePlayers(truePlayers);
             })
@@ -73,5 +73,4 @@ class WaitingPlayers extends React.Component<Props, State> {
     }
 }
 
-//const WaitingPlayers = withRouter(WaitingPlayersWithoutHistory);
 export default WaitingPlayers;
