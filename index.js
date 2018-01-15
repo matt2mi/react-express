@@ -109,6 +109,7 @@ const players = []; // ['pseudo']
 const maxPlayers = 2;
 const playersMap = new Map(); // (socketClient, 'pseudo')
 const liesMap = new Map();
+const answersMap = new Map();
 
 function addPlayer(pseudo, socketClient) {
     console.log(`${pseudo} is subscribing to app !`);
@@ -127,7 +128,7 @@ function deletePlayer(id, socketClient) {
 }
 
 // TODO : dynamic key name
-function maptoArray(map) {
+function mapToArray(map) {
     const array = [];
     for(let [key, value] of map) {
         array.push({key, value});
@@ -155,10 +156,18 @@ sioServer.on('connection', (socketClient) => {
     });
 
     socketClient.on('lieAnswered', ({lieValue, pseudo}) => {
-        console.log('lie received ', lieValue, ' from ', pseudo);
+        console.log('lie received', lieValue, 'from', pseudo);
         liesMap.set(pseudo, lieValue);
         if(liesMap.size === players.length) {
-            sioServer.emit('loadLies', maptoArray(liesMap));
+            sioServer.emit('loadLies', mapToArray(liesMap));
         }
-    })
+    });
+
+    socketClient.on('lieChoosen', answer => {
+        console.log('lie choosen by', answer.pseudo, ':', answer.lie.value, '(', answer.lie.key, ')');
+        answersMap.set(answer.pseudo, answer.lie);
+        if(answersMap.size === players.length) {
+            sioServer.emit('goToResults', mapToArray(answersMap));
+        }
+    });
 });

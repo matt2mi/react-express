@@ -2,8 +2,7 @@ import * as React from 'react';
 import {getCurrentPseudo, getSocket} from '../helpers/io-api';
 import Socket = SocketIOClient.Socket;
 import {SyntheticEvent} from 'react';
-import MyButton from './MyLinkButton';
-import {History} from 'history';
+import {Redirect} from 'react-router';
 
 interface Lie {
     key: string;
@@ -25,6 +24,7 @@ interface State {
     readonly lies: Lie[];
     readonly lieSent: boolean;
     readonly displayLies: boolean;
+    readonly goToResults: boolean;
 }
 
 export default class Playing extends React.Component<Props, State> {
@@ -47,13 +47,18 @@ export default class Playing extends React.Component<Props, State> {
     }
 
     loadLies(lies: Lie[]) {
-        this.setState({displayLies: true});
-        this.setState({lies});
+        console.log('loadlies', lies);
+        this.setState({lies, displayLies: true});
     }
 
-    chooseLie(e: SyntheticEvent<HTMLButtonElement>, history: History) {
+    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
         e.preventDefault();
-        history.push('/results')
+        console.log('lie', lie);
+        this.socket.on('goToResults', (results: any) => {
+            this.setState({goToResults: true});
+            console.log('results', results);
+        });
+        this.socket.emit('lieChoosen', {lie: lie, pseudo: getCurrentPseudo()});
     }
 
     constructor(props: Props) {
@@ -75,7 +80,8 @@ export default class Playing extends React.Component<Props, State> {
                 value: 'value2'
             }],
             lieSent: false,
-            displayLies: false
+            displayLies: false,
+            goToResults: false
         };
 
         this.socket = getSocket();
@@ -96,6 +102,9 @@ export default class Playing extends React.Component<Props, State> {
     }
 
     render() {
+        if(this.state.goToResults) {
+            return(<Redirect to="/results"/>);
+        }
         return (
             <div className="card">
                 <div className="row">
@@ -121,10 +130,14 @@ export default class Playing extends React.Component<Props, State> {
                     {
                         this.state.displayLies ?
                             <div>
-                                {this.state.lies.map(lie => (
-                                    <div className="col" key={lie.key}>
-                                        <MyButton cb={this.chooseLie} type={'button'}>{lie.value}</MyButton>
-                                    </div>))}
+                                {this.state.lies.map(lie => {
+                                    return (<div className="col" key={lie.key}>
+                                        <button type="button" className="btn btn-primary"
+                                                onClick={(e) => this.chooseLie(e/*, params.history*/, lie)}>
+                                            {lie.value}
+                                        </button>
+                                    </div>);
+                                })}
                             </div>
                             : null
                     }
