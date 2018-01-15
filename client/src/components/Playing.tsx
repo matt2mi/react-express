@@ -5,8 +5,8 @@ import {SyntheticEvent} from 'react';
 import {Redirect} from 'react-router';
 
 interface Lie {
-    key: string;
-    value: string;
+    pseudo: string;
+    lieValue: string;
 }
 
 interface Question {
@@ -54,9 +54,8 @@ export default class Playing extends React.Component<Props, State> {
     chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
         e.preventDefault();
         console.log('lie', lie);
-        this.socket.on('goToResults', (results: any) => {
+        this.socket.on('goToResults', () => {
             this.setState({goToResults: true});
-            console.log('results', results);
         });
         this.socket.emit('lieChoosen', {lie: lie, pseudo: getCurrentPseudo()});
     }
@@ -70,15 +69,9 @@ export default class Playing extends React.Component<Props, State> {
         this.chooseLie = this.chooseLie.bind(this);
 
         this.state = {
-            question: {text: '', answers: [''], lies: ['']},
+            question: {text: '', answers: [], lies: []},
             lieAnswered: '',
-            lies: [{
-                key: 'key1',
-                value: 'value1'
-            }, {
-                key: 'key2',
-                value: 'value2'
-            }],
+            lies: [],
             lieSent: false,
             displayLies: false,
             goToResults: false
@@ -131,10 +124,10 @@ export default class Playing extends React.Component<Props, State> {
                         this.state.displayLies ?
                             <div>
                                 {this.state.lies.map(lie => {
-                                    return (<div className="col" key={lie.key}>
+                                    return (<div className="col" key={lie.pseudo}>
                                         <button type="button" className="btn btn-primary"
                                                 onClick={(e) => this.chooseLie(e/*, params.history*/, lie)}>
-                                            {lie.value}
+                                            {lie.lieValue}
                                         </button>
                                     </div>);
                                 })}

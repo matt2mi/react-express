@@ -1,4 +1,4 @@
-module.expors = [
+const questions = [
     {
         text: 'El colacho est un festival espagnol où les gens s\'habille en diables et sautent au dessus de ...',
         answers: ['bébé', 'bebe', 'bébés', 'bebes'],
@@ -62,4 +62,7 @@ module.expors = [
     }
 ];
 
+module.exports = {
+    questions
+};
 // autre : https://www.youtube.com/watch?v=Wzt4pygZWwA
