@@ -1,13 +1,13 @@
-const players = []; // [{id: 0, pseudo: 'pseudo'}]
-const maxPlayers = 2;
-const playersMap = new Map(); // (socketClient, 'pseudo')
-const liesMap = new Map(); // ('mito', 'pseudo')
-const answersMap = new Map(); // (lieValue: 'mito', ['pseudo'])
+let players = []; // [{id: 0, pseudo: 'pseudo'}]
+let maxPlayers = 2;
+let playersMap = new Map(); // (socketClient, 'pseudo')
+let liesMap = new Map(); // ('mito', 'pseudo')
+let answersMap = new Map(); // (lieValue: 'mito', ['pseudo'])
 let scores = []; // [{pseudo: 'pseudo', scoreValue: 500}]
 
 function addPlayer(pseudo, socketClient) {
-    players.push({id: players.length - 1, pseudo: pseudo});
-    playersMap.set(socketClient, players[players.length - 1]);
+    players.push({id: players.length, pseudo: pseudo});
+    playersMap.set(socketClient, players[players.length]);
 }
 
 function deletePlayer(id, socketClient) {
@@ -38,6 +38,15 @@ function calculateScores() {
     return mapToArray(scoresMap, 'pseudo', 'value');
 }
 
+function init() {
+    players = []; // [{id: 0, pseudo: 'pseudo'}]
+    maxPlayers = 2;
+    playersMap = new Map(); // (socketClient, 'pseudo')
+    liesMap = new Map(); // ('mito', 'pseudo')
+    answersMap = new Map(); // (lieValue: 'mito', ['pseudo'])
+    scores = []; // [{pseudo: 'pseudo', scoreValue: 500}]
+}
+
 module.exports = {
     players,
     maxPlayers,
@@ -48,5 +57,6 @@ module.exports = {
     addPlayer,
     deletePlayer,
     mapToArray,
-    calculateScores
+    calculateScores,
+    init
 };

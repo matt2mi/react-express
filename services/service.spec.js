@@ -1,18 +1,15 @@
-const assert = require('chai').assert;
 const expect = require('chai').expect;
 const sinon = require('sinon');
+
+const service = require('./service');
 
 describe('Service Test', () => {
     describe('Fct addPlayer', () => {
         it('addPlayer should be a fct', () => {
-            const service = require('./service');
-
             expect(service.addPlayer).to.be.a('function');
         });
 
         it('addPlayer should add one player to players & playersMap', () => {
-            const service = require('./service');
-
             // given
             const player = 'player1';
 
@@ -27,21 +24,16 @@ describe('Service Test', () => {
 
     describe('Fct deletePlayer', () => {
         it('deletePlayer should be a fct', () => {
-            const service = require('./service');
-
             expect(service.deletePlayer).to.be.a('function');
         });
 
         it('deletePlayer should delete the only one player', () => {
-            const service = require('./service');
-
             // given
             const pseudo = 'player1';
             service.players.push(pseudo);
             const socketClient = {value: 'socketClient'};
             service.playersMap.set(socketClient, pseudo);
 
-            console.log(service.players.length);
             // when
             service.deletePlayer(0, socketClient);
 
@@ -52,8 +44,6 @@ describe('Service Test', () => {
 
         it('deletePlayer should delete one player in 3 players & set back the ids', () => {
             // given
-            const service = require('./service');
-
             const player1 = {id: 0, pseudo: 'player1'};
             const player2 = {id: 1, pseudo: 'player2'};
             const player3 = {id: 2, pseudo: 'player3'};
@@ -85,14 +75,10 @@ describe('Service Test', () => {
 
     describe('Fct calculateScores', () => {
         it('calculateScores should be a fct', () => {
-            const service = require('./service');
-
             expect(service.calculateScores).to.be.a('function');
         });
 
         it('calculateScores should give 200 by lie choosen - 1pl', () => {
-            const service = require('./service');
-
             // given
             service.players = [];
             service.liesMap = new Map();
@@ -115,8 +101,6 @@ describe('Service Test', () => {
         });
 
         it('calculateScores should give 200 by lie choosen - 3pl - 2 player on same lie', () => {
-            const service = require('./service');
-
             // given
             service.players = [];
             service.liesMap = new Map();
