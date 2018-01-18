@@ -15,14 +15,24 @@ module.exports = function (app, indexFilePath) {
         console.log('question sent', question);
     });
     app.get('/api/results', (req, res) => {
-        const results = service.mapToArray(service.answersMap, 'lieValue', 'pseudos');
+        const results = service
+            .mapToArray(service.answersMap, 'lieValue', 'pseudos')
+            .map(res => {
+                return {
+                    answer: {
+                        lieValue: res.lieValue,
+                        liePseudo: service.liesMap.get(res.lieValue)
+                    },
+                    pseudos: res.pseudos
+                };
+            });
         res.json(results);
         console.log('results sent', results);
     });
     app.get('/api/scores', (req, res) => {
-        const scores = service.calculateScores();
+        const scores = service.calculateScores(service.players, service.answersMap, service.liesMap);
         res.json(scores);
-        console.log('results sent', scores);
+        console.log('scores sent', scores);
     });
 
     // send React's index.html file.

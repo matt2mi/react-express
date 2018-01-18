@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const service = require('./service');
 
 describe('Service Test', () => {
-    describe('Fct addPlayer', () => {
+    /*describe('Fct addPlayer', () => {
         it('addPlayer should be a fct', () => {
             expect(service.addPlayer).to.be.a('function');
         });
@@ -71,7 +71,7 @@ describe('Service Test', () => {
 
             expect(service.playersMap.size).to.equal(2);
         });
-    });
+    });*/
 
     describe('Fct calculateScores', () => {
         it('calculateScores should be a fct', () => {
@@ -80,21 +80,18 @@ describe('Service Test', () => {
 
         it('calculateScores should give 200 by lie choosen - 1pl', () => {
             // given
-            service.players = [];
-            service.liesMap = new Map();
-            service.answersMap = new Map();
+            const players = [{id: 0, pseudo: 'player1'}];
+            const liesMap = new Map();
+            const answersMap = new Map();
 
-            service.players = ['player1'];
+            liesMap.set('mito1', 'player1');
 
-            service.liesMap
-                .set('mito1', 'player1');
-
-            service.answersMap
-                .set('mito1', ['player1']);
+            answersMap.set('mito1', ['player1']);
 
             // when
-            const scores = service.calculateScores();
+            const scores = service.calculateScores(players, answersMap, liesMap);
 
+            console.log('scores', scores);
             // then
             expect(scores[0].pseudo).to.equal('player1');
             expect(scores[0].value).to.equal(200);
@@ -102,30 +99,29 @@ describe('Service Test', () => {
 
         it('calculateScores should give 200 by lie choosen - 3pl - 2 player on same lie', () => {
             // given
-            service.players = [];
-            service.liesMap = new Map();
-            service.answersMap = new Map();
+            const players = [
+                {id: 0, pseudo: 'player1'},
+                {id: 1, pseudo: 'player2'},
+                {id: 2, pseudo: 'player3'}
+            ];
+            const answersMap = new Map();
+            const liesMap = new Map();
 
-            service.players.push({id: 0, pseudo: 'player1'});
-            service.players.push({id: 1, pseudo: 'player2'});
-            service.players.push({id: 2, pseudo: 'player3'});
+            answersMap
+                .set('mito1', ['player1', 'player2'])
+                .set('mito2', ['player3']);
 
-            service.liesMap
+            liesMap
                 .set('mito1', 'player1')
                 .set('mito2', 'player2')
                 .set('mito3', 'player3');
 
-            service.answersMap
-                .set('mito1', ['player1', 'player2'])
-                .set('mito2', ['player3']);
-
             // when
-            const scores = service.calculateScores();
+            const scores = service.calculateScores(players, answersMap, liesMap);
 
             // then
             expect(scores[0].pseudo).to.equal('player1');
             expect(scores[0].value).to.equal(400);
-
             expect(scores[1].pseudo).to.equal('player2');
             expect(scores[1].value).to.equal(200);
         });

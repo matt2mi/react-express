@@ -48,8 +48,6 @@ module.exports = function (httpServer) {
 
             nbAnswers++;
             if (nbAnswers === service.players.length) {
-                console.log('answersMap', service.answersMap);
-                service.scores = service.calculateScores();
                 sioServer.emit('goToResults');
             }
         });

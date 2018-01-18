@@ -21,6 +21,7 @@ export default class Login extends React.Component<Props, State> {
     }
 
     login(event: SyntheticEvent<HTMLButtonElement>, history: History) {
+        console.log('pseudo', this.state.pseudo);
         event.preventDefault();
         subscribeToApp(
             (error: string) => {

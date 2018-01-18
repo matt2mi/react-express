@@ -1,5 +1,5 @@
 let players = []; // [{id: 0, pseudo: 'pseudo'}]
-let maxPlayers = 2;
+let maxPlayers = 3;
 let playersMap = new Map(); // (socketClient, 'pseudo')
 let liesMap = new Map(); // ('mito', 'pseudo')
 let answersMap = new Map(); // (lieValue: 'mito', ['pseudo'])
@@ -26,13 +26,13 @@ function mapToArray(map, keyPropName, valuePropName) {
     return array;
 }
 
-function calculateScores() {
+function calculateScores(players, answersMap, liesMap) {
     const scoresMap = new Map();
     players.forEach(player => scoresMap.set(player.pseudo, 0));
 
     for(let [lieValue, pseudos] of answersMap) {
-        const lierPseudo = liesMap.get(lieValue);
-        scoresMap.set(lierPseudo, 200 * pseudos.length);
+        const liarPseudo = liesMap.get(lieValue);
+        scoresMap.set(liarPseudo, 200 * pseudos.length);
     }
 
     return mapToArray(scoresMap, 'pseudo', 'value');
