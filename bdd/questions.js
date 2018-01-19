@@ -1,7 +1,7 @@
 const questions = [
     {
         text: 'El colacho est un festival espagnol où les gens s\'habille en diables et sautent au dessus de ...',
-        answers: ['bébé', 'bebe', 'bébés', 'bebes'],
+        answers: ['bébés', 'bebes', 'bébé', 'bebe'],
         lies: ['voitures', 'piscines']
     }, {
         text: 'Dans la ville d\'Alliance au Nebraska, on peut voir une réplique du Stonehenge faite de ...',
@@ -13,7 +13,7 @@ const questions = [
         lies: ['your mother', 'USA']
     }, {
         text: 'En vacances en chine à Dongyang, il faut absolument goûter leurs oeufs cuits dans ...',
-        answers: ['l\'urine d\'enfant', 'urine d\'enfant', 'urine'],
+        answers: ['l\'urine d\'enfant', 'urine d\'enfant', 'urine enfant', 'urine'],
         lies: ['un wok', 'du lait de panda']
     }, {
         text: 'Nicolas Ancion a écrit un livre sur un pays imaginaires dont le titre est "Les ours n\'ont pas de problème de ..."',
