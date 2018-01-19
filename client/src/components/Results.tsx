@@ -24,13 +24,21 @@ interface State {
 }
 
 export default class Results extends React.Component<Props, State> {
+
+    wrongAnswer = {
+        border: '1px solid red'
+    };
+    goodAnswer = {
+        border: '1px solid green'
+    };
+
     constructor(props: any) {
         super(props);
 
         this.state = {
             results: [],
             scores: []
-        }
+        };
     }
 
     componentWillMount() {
@@ -82,20 +90,18 @@ export default class Results extends React.Component<Props, State> {
         return (
             <div>
                 <div className="row">Results page !</div>
-                <div className="row">
-                    {this.state.results.map(res => (
-                        <div>
-                            <div className="col red-border" key={res.id}>
-                                {res.playerPseudos[0] + ' a choisi ' + res.answer.lieValue + ' (mito de ' + res.answer.liePseudo + ')'}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+
+                {this.state.results.map(res => (
+                    <div className="row" style={this.wrongAnswer} key={res.id}>
+                        {res.playerPseudos[0] + ' a choisi ' + res.answer.lieValue + ' (mito de ' + res.answer.liePseudo + ')'}
+                    </div>
+                ))}
+
                 <div className="row">Scores !</div>
                 <div className="row">
                     {this.state.scores.map(score => (
                         <div>
-                            <div className="col-1 red-border" key={score.id}>
+                            <div className="col-2" key={score.id}>
                                 {score.pseudo}
                             </div>
                         </div>
@@ -104,7 +110,7 @@ export default class Results extends React.Component<Props, State> {
                 <div className="row">
                     {this.state.scores.map(score => (
                         <div>
-                            <div className="col-1 red-border" key={score.id}>
+                            <div className="col-2" key={score.id}>
                                 {score.value}
                             </div>
                         </div>

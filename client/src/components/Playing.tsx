@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {getCurrentPseudo, getSocket} from '../helpers/io-api';
-import Socket = SocketIOClient.Socket;
 import {SyntheticEvent} from 'react';
+import {getCurrentPseudo, getSocket} from '../helpers/io-api';
 import {Redirect} from 'react-router';
+import {Store} from "../redux/Store";
+import Socket = SocketIOClient.Socket;
 
 interface Lie {
     pseudo: string;
@@ -25,6 +26,7 @@ interface State {
     readonly lieSent: boolean;
     readonly displayLies: boolean;
     readonly goToResults: boolean;
+    readonly currentPseudo?: string;
 }
 
 export default class Playing extends React.Component<Props, State> {
@@ -34,30 +36,6 @@ export default class Playing extends React.Component<Props, State> {
         this.setState({
             lieAnswered: event.currentTarget.value
         });
-    }
-
-    sendLie(event: SyntheticEvent<HTMLButtonElement>) {
-        this.setState({lieSent: true});
-        event.preventDefault();
-        this.socket.on('loadLies', (lies: Lie[]) => this.loadLies(lies));
-        this.socket.emit('lieAnswered', {
-            lieValue: this.state.lieAnswered,
-            pseudo: getCurrentPseudo()
-        });
-    }
-
-    loadLies(lies: Lie[]) {
-        console.log('loadlies', lies);
-        this.setState({lies, displayLies: true});
-    }
-
-    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
-        e.preventDefault();
-        console.log('lie', lie);
-        this.socket.on('goToResults', () => {
-            this.setState({goToResults: true});
-        });
-        this.socket.emit('lieChoosen', {lie: lie, pseudo: getCurrentPseudo()});
     }
 
     constructor(props: Props) {
@@ -74,10 +52,35 @@ export default class Playing extends React.Component<Props, State> {
             lies: [],
             lieSent: false,
             displayLies: false,
-            goToResults: false
+            goToResults: false,
+            currentPseudo: Store.getState().pseudo
         };
 
         this.socket = getSocket();
+    }
+
+    loadLies(lies: Lie[]) {
+        console.log('loadlies', lies);
+        this.setState({lies, displayLies: true});
+    }
+
+    sendLie() {
+        this.setState({lieSent: true});
+        this.socket.on('loadLies', (lies: Lie[]) => this.loadLies(lies));
+        this.socket.emit('lieAnswered', {
+            lieValue: this.state.lieAnswered,
+            pseudo: getCurrentPseudo()
+        });
+    }
+
+    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
+        this.setState({displayLies: false});
+        e.preventDefault();
+        console.log('lie', lie);
+        this.socket.on('goToResults', () => {
+            this.setState({goToResults: true});
+        });
+        this.socket.emit('lieChoosen', {lie: lie, pseudo: getCurrentPseudo()});
     }
 
     componentWillMount() {
@@ -95,8 +98,8 @@ export default class Playing extends React.Component<Props, State> {
     }
 
     render() {
-        if(this.state.goToResults) {
-            return(<Redirect to="/results"/>);
+        if (this.state.goToResults) {
+            return (<Redirect to="/results"/>);
         }
         return (
             <div className="card">
@@ -108,12 +111,12 @@ export default class Playing extends React.Component<Props, State> {
                     {
                         !this.state.lieSent ?
                             <div className="col">
-                                <form>
+                                <form onSubmit={this.sendLie}>
                                     <div className="form-group">
                                         <label>Mensonge</label>
                                         <input type="text" className="form-control" onChange={this.changeValue}/>
                                     </div>
-                                    <button type="button" className="btn btn-primary" onClick={(e) => this.sendLie(e)}>
+                                    <button type="submit" className="btn btn-primary">
                                         Envoyer
                                     </button>
                                 </form>
@@ -124,12 +127,15 @@ export default class Playing extends React.Component<Props, State> {
                         this.state.displayLies ?
                             <div>
                                 {this.state.lies.map(lie => {
-                                    return (<div className="col" key={lie.pseudo}>
-                                        <button type="button" className="btn btn-primary"
-                                                onClick={(e) => this.chooseLie(e/*, params.history*/, lie)}>
-                                            {lie.lieValue}
-                                        </button>
-                                    </div>);
+                                    if (lie.pseudo !== this.state.currentPseudo) {
+                                        return (<div className="col" key={lie.pseudo}>
+                                            <button type="button" className="btn btn-primary"
+                                                    onClick={(e) => this.chooseLie(e, lie)}>
+                                                {lie.lieValue}
+                                            </button>
+                                        </div>);
+                                    }
+                                    return null;
                                 })}
                             </div>
                             : null

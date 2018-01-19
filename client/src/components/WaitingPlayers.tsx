@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {getSocket} from '../helpers/io-api';
-import Socket = SocketIOClient.Socket;
 import {Redirect} from 'react-router';
+import Socket = SocketIOClient.Socket;
 
 interface Player {
     id: number;
@@ -14,6 +14,7 @@ interface Props {
 interface State {
     readonly players: Player[];
     readonly goToPlay: boolean;
+    readonly nbMaxPlayers: number;
 }
 
 class WaitingPlayers extends React.Component<Props, State> {
@@ -33,7 +34,7 @@ class WaitingPlayers extends React.Component<Props, State> {
         this.enoughPlayers = this.enoughPlayers.bind(this);
 
         this.socket = getSocket();
-        this.state = {players: [], goToPlay: false};
+        this.state = {players: [], goToPlay: false, nbMaxPlayers: 0};
         this.socket.on('updatePlayers', this.onUpdatePlayers);
         this.socket.on('players-list-full', this.enoughPlayers);
     }
@@ -52,6 +53,17 @@ class WaitingPlayers extends React.Component<Props, State> {
             .catch(e => {
                 console.error(e);
             });
+
+        fetch('/api/nbMaxPlayers')
+            .then(result => {
+                return result.json();
+            })
+            .then((nbMaxPlayers: number) => {
+                this.setState({nbMaxPlayers});
+            })
+            .catch(e => {
+                console.error(e);
+            });
     }
 
     render() {
@@ -62,7 +74,7 @@ class WaitingPlayers extends React.Component<Props, State> {
                 <div>
                     <div className="row">Waiting other players...</div>
                     <div className="row">
-                        {this.state.players.length}/4 players
+                        {this.state.players.length + '/' + this.state.nbMaxPlayers} players
                     </div>
                     {this.state.players.map(player => {
                         return (<div className="row" key={player.id}>{player.pseudo}</div>);

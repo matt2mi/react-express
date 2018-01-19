@@ -9,6 +9,9 @@ module.exports = function (app, indexFilePath) {
         res.json(service.players);
         console.log('players sent', service.players);
     });
+    app.get('/api/nbMaxPlayers', (req, res) => {
+        res.json(service.maxPlayers);
+    });
     app.get('/api/question', (req, res) => {
         const question = QUESTIONS[0];
         res.json(question);

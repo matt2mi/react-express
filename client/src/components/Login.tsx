@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {SyntheticEvent} from 'react';
-import {subscribeToApp, setCurrentPseudo} from '../helpers/io-api';
+import {setCurrentPseudo, subscribeToApp} from '../helpers/io-api';
 import MyButton from './MyLinkButton';
 import {History} from 'history';
+import {Store} from '../redux/Store';
 
 interface Props {
 }
@@ -22,6 +23,7 @@ export default class Login extends React.Component<Props, State> {
 
     login(event: SyntheticEvent<HTMLButtonElement>, history: History) {
         console.log('pseudo', this.state.pseudo);
+        Store.dispatch({type: 'NEW_PSEUDO', payload: this.state.pseudo});
         event.preventDefault();
         subscribeToApp(
             (error: string) => {
