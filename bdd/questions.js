@@ -1,4 +1,4 @@
-const questions = [
+module.exports = [
     {
         text: 'El colacho est un festival espagnol où les gens s\'habille en diables et sautent au dessus de ...',
         answers: ['bébés', 'bebes', 'bébé', 'bebe'],
@@ -61,8 +61,4 @@ const questions = [
         lies: ['parade', 'problem']
     }
 ];
-
-module.exports = {
-    questions
-};
 // autre : https://www.youtube.com/watch?v=Wzt4pygZWwA

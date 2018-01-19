@@ -27,6 +27,7 @@ function mapToArray(map, keyPropName, valuePropName) {
 }
 
 function calculateScores(players, answersMap, liesMap) {
+    // TODO : compter point avec bonne réponse et mito pc
     const scoresMap = new Map();
     players.forEach(player => scoresMap.set(player.pseudo, 0));
 

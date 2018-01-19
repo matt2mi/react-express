@@ -1,5 +1,6 @@
 const sio = require('socket.io');
 const service = require('../services/service');
+const QUESTIONS = require('../bdd/questions');
 
 let nbAnswers = 0;
 
@@ -33,7 +34,17 @@ module.exports = function (httpServer) {
             console.log('lie received', lieValue, 'from', pseudo);
             service.liesMap.set(lieValue, pseudo);
             if (service.liesMap.size === service.players.length) {
-                sioServer.emit('loadLies', service.mapToArray(service.liesMap, 'lieValue', 'pseudo'));
+                console.log('q', QUESTIONS[0]);
+                const lies = service.mapToArray(service.liesMap, 'lieValue', 'pseudo');
+                lies.push({
+                    lieValue: QUESTIONS[0].answers[0],
+                    pseudo: 'truth'
+                });
+                lies.push({
+                    lieValue: QUESTIONS[0].lies[0],
+                    pseudo: 'gameLie'
+                });
+                sioServer.emit('loadLies', lies);
             }
         });
 

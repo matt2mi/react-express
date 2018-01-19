@@ -1,6 +1,6 @@
 const path = require('path');
 
-const QUESTIONS = require('../bdd/questions').questions;
+const QUESTIONS = require('../bdd/questions');
 const service = require('../services/service');
 
 module.exports = function (app, indexFilePath) {
